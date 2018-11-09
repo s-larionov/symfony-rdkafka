@@ -1,0 +1,10 @@
+{
+    "name": "s-larionov/symfony-rdkafka",
+    "authors": [
+        {
+            "name": "Sergey Larionov",
+            "email": "s.larionov@airpush.com"
+        }
+    ],
+    "require": {}
+}
