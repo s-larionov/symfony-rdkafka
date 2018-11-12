@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3410d1ffa5da7e952ddd793d8b070b33",
+    "content-hash": "a08efb800dc14446109646615615a123",
     "packages": [
         {
             "name": "psr/cache",
@@ -1260,7 +1260,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.1",
-        "ext-rdkafka": "*"
+        "ext-rdkafka": "*",
+        "ext-pcntl": "*"
     },
     "platform-dev": []
 }

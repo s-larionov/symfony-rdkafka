@@ -15,5 +15,14 @@
         "symfony/console" : "^3.0",
         "symfony/config" : "^3.0",
         "symfony/yaml" : "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "KafkaBundle\\": "src/KafkaBundle"
+        },
+        "classmap": [
+            "app/AppKernel.php",
+            "app/AppCache.php"
+        ]
     }
 }
