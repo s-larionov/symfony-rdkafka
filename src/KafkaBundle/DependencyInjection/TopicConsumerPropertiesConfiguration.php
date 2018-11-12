@@ -87,8 +87,6 @@ trait TopicConsumerPropertiesConfiguration
         return $node
             ->canBeUnset()
             ->children()
-            ->append($this->autoCommitEnableNodeDef())
-            ->append($this->autoCommitIntervalMsNodeDef())
             ->append($this->autoOffsetResetNodeDef())
             ->append($this->offsetStorePathNodeDef())
             ->append($this->offsetStoreSyncIntervalMsNodeDef())
