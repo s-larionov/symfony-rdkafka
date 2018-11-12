@@ -1,0 +1,60 @@
+kafka:
+  producers:
+    kafka_topic_name:
+      brokers: '127.0.0.1:9092'
+       topic: kafka_topic_name
+      properties:
+        # All properties are optional
+        group_id: kafka_group_id
+        message_max_bytes: 1000000
+        receive_message_max_bytes: 100000000
+        max_in_flight_requests_per_connection: 1000000
+        metadata_request_timeout_ms: 60000
+        topic_metadata_refresh_interval_ms: 300000
+        topic_metadata_refresh_fast_cnt: 10
+        topic_metadata_refresh_fast_interval_ms: 250
+        socket_timeout_ms: 60000
+        socket_blocking_max_ms: 100
+        socket_send_buffer_bytes: 0
+        socket_receive_buffer_bytes: 0
+        socket_keepalive_enable: false
+        socket_max_fails: 0
+        broker_address_ttl: 100
+        broker_address_family: any
+        security_protocol: plaintext
+        ssl_cipher_suites: ~
+        ssl_key_location: /pem/file/location
+        ssl_key_password: PrIvAtE_pAsSwOrD
+        ssl_certificate_location: /pem/file/location
+        ssl_ca_location: /ca/file/location
+        ssl_crl_location: /crl/file/location
+        sasl_mechanisms: GSSAPI
+        sasl_kerberos_service_name: kafka
+        sasl_kerberos_principal: kafkaclient
+        sasl_kerberos_kinit_cmd: ~
+        sasl_kerberos_keytab: ~
+        sasl_kerberos_min_time_before_relogin: 60000
+        sasl_username: user
+        sasl_password: password
+        session_timeout_ms: 30000
+        heartbeat_interval_ms: 1000
+      topic_properties:
+        # All properties are optional
+        request_required_acks: 1
+        request_timeout_ms: 5000
+        message_timeout_ms: 300000
+        produce_offset_report: false
+        compression_codec: inherit
+  consumers:
+    kafka_topic_name:
+      brokers: '127.0.0.1:9092'
+      topic: kafka_topic_name
+      properties:
+        # the same as kafka.producers.[producer_name].properties
+      topic_properties:
+        # All properties are optional
+        offset_store_method: broker
+        offset_store_path: /path/to/storing/offset
+        auto_offset_reset: smallest
+        offset_store_sync_interval_ms: -1
+        consume_callback_max_messages: 0
