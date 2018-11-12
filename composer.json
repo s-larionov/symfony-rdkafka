@@ -19,10 +19,6 @@
     "autoload": {
         "psr-4": {
             "KafkaBundle\\": "src/KafkaBundle"
-        },
-        "classmap": [
-            "app/AppKernel.php",
-            "app/AppCache.php"
-        ]
+        }
     }
 }
