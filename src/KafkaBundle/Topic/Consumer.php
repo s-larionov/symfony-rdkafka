@@ -47,7 +47,7 @@ class Consumer
         switch ($message->err) {
             case RD_KAFKA_RESP_ERR_NO_ERROR:
                 $this->processMessage($handler, $message, $retries);
-                $consumer->commitAsync();
+                $consumer->commit($message);
                 break;
             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
             case RD_KAFKA_RESP_ERR__TIMED_OUT:

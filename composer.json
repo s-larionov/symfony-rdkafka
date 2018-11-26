@@ -16,6 +16,9 @@
         "symfony/config" : "^3.0",
         "symfony/yaml" : "^3.0"
     },
+    "require-dev": {
+        "kwn/php-rdkafka-stubs": "^1.2"
+    },
     "autoload": {
         "psr-4": {
             "KafkaBundle\\": "src/KafkaBundle"
