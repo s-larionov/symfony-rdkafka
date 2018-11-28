@@ -82,6 +82,12 @@ class Consumer
                 $handler->process($message);
                 return;
             } catch (\Exception $e) {
+                $this->logger->warning('Error in message handler', [
+                    'handler' => get_class($handler),
+                    'exception' => $e,
+                    'attempt' => $attempt,
+                ]);
+
                 $attempt++;
 
                 if ($attempt > $retries) {
