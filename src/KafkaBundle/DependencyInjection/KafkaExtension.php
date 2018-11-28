@@ -2,10 +2,12 @@
 
 namespace KafkaBundle\DependencyInjection;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Mike Shauneu <mike.shauneu@gmail.com>
@@ -26,6 +28,14 @@ class KafkaExtension extends Extension
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        $manager = $container->getDefinition('kafka_manager');
+        if ($container->hasDefinition('logger')) {
+            $logger = $container->getDefinition('logger');
+            if (is_a($logger->getClass(), LoggerInterface::class, true)) {
+                $manager->replaceArgument(0, new Reference('logger'));
+            }
+        }
 
         $this->registerConsumers($container, $config);
         $this->registerProducers($container, $config);

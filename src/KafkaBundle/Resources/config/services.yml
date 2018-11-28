@@ -2,3 +2,5 @@ services:
   kafka_manager:
     class: KafkaBundle\Manager\KafkaManager
     lazy: true
+    arguments:
+      - ~

@@ -3,8 +3,10 @@
 namespace KafkaBundle\Topic;
 
 use KafkaBundle\Manager\HandlerInterface;
+use Psr\Log\LoggerInterface;
 use RdKafka\KafkaConsumer;
 use RdKafka\Message;
+use RdKafka\TopicPartition;
 
 class Consumer
 {
@@ -14,9 +16,13 @@ class Consumer
     /** @var KafkaConsumer */
     protected $kafkaConsumer;
 
-    public function __construct(Config $config)
+    /** @var LoggerInterface */
+    protected $logger;
+
+    public function __construct(Config $config, LoggerInterface $logger)
     {
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -109,8 +115,63 @@ class Consumer
             return $this->kafkaConsumer;
         }
 
-        $this->kafkaConsumer = new KafkaConsumer($this->config->getKafkaConfig());
+        $config = $this->config->getKafkaConfig();
+        $config->setRebalanceCb(function (KafkaConsumer $kafka, int $error, array $partitions = null): void {
+            /** @var TopicPartition $partitions */
+            switch ($error) {
+                case RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS:
+                    $this->logger->info('Assign partitions', [
+                        'partitions' => $this->extractPartitionsInfo($partitions),
+                    ]);
+                    $kafka->assign($partitions);
+                    break;
+                case RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS:
+                    $this->logger->info('Revoke partitions', [
+                        'partitions' => $this->extractPartitionsInfo($partitions),
+                    ]);
+                    break;
+                default:
+                    $this->logger->error('Rebalance error', [
+                        'error_code' => $error,
+                        'partitions' => $this->extractPartitionsInfo($partitions),
+                    ]);
+                    $kafka->assign(NULL);
+            }
+        });
+        $config->setErrorCb(function(KafkaConsumer $consumer, int $error, string $reason) {
+            $this->logger->error('KafkaConsumer error', [
+                'error_code' => $error,
+                'error_msg' => $reason,
+                'partitions' => $this->extractPartitionsInfo($consumer->getAssignment()),
+            ]);
+        });
+
+        $this->kafkaConsumer = new KafkaConsumer($config);
 
         return $this->kafkaConsumer;
+    }
+
+    /**
+     * @param TopicPartition[]|null $partitions
+     *
+     * @return array|null
+     */
+    protected function extractPartitionsInfo(array $partitions = null): ?array
+    {
+        if (null === $partitions) {
+            return null;
+        }
+
+        $result = [];
+
+        foreach ($partitions as $partition) {
+            $result[] = [
+                'topic' => $partition->getTopic(),
+                'partition' => $partition->getPartition(),
+                'offset' => $partition->getOffset(),
+            ];
+        }
+
+        return $result;
     }
 }
