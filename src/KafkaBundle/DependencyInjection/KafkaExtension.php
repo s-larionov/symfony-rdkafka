@@ -29,14 +29,6 @@ class KafkaExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $manager = $container->getDefinition('kafka_manager');
-        if ($container->hasDefinition('logger')) {
-            $logger = $container->getDefinition('logger');
-            if (is_a($logger->getClass(), LoggerInterface::class, true)) {
-                $manager->replaceArgument(0, new Reference('logger'));
-            }
-        }
-
         $this->registerConsumers($container, $config);
         $this->registerProducers($container, $config);
     }

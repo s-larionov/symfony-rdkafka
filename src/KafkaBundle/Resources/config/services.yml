@@ -3,4 +3,6 @@ services:
     class: KafkaBundle\Manager\KafkaManager
     lazy: true
     arguments:
-      - ~
+      - '@logger'
+    tags:
+      - { name: monolog.logger, channel: kafka }
