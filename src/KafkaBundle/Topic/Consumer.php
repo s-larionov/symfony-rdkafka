@@ -99,6 +99,7 @@ class Consumer
     public function unsubscribe(): void
     {
         $consumer = $this->getKafkaConsumer();
+        $consumer->assign(null);
         $consumer->unsubscribe();
     }
 
@@ -121,19 +122,19 @@ class Consumer
             switch ($error) {
                 case RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS:
                     $this->logger->info('Assign partitions', [
-                        'partitions' => $this->extractPartitionsInfo($partitions),
+                        'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
                     ]);
                     $kafka->assign($partitions);
                     break;
                 case RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS:
                     $this->logger->info('Revoke partitions', [
-                        'partitions' => $this->extractPartitionsInfo($partitions),
+                        'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
                     ]);
                     break;
                 default:
                     $this->logger->error('Rebalance error', [
                         'error_code' => $error,
-                        'partitions' => $this->extractPartitionsInfo($partitions),
+                        'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
                     ]);
                     $kafka->assign(NULL);
             }
