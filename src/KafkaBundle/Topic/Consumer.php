@@ -129,18 +129,22 @@ class Consumer
                 case RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS:
                     $this->logger->info('Assign partitions', [
                         'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
+                        'current_partitions' => json_encode($kafka->getAssignment()),
                     ]);
                     $kafka->assign($partitions);
                     break;
                 case RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS:
                     $this->logger->info('Revoke partitions', [
                         'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
+                        'current_partitions' => json_encode($kafka->getAssignment()),
                     ]);
+                    $kafka->assign(NULL);
                     break;
                 default:
                     $this->logger->error('Rebalance error', [
                         'error_code' => $error,
                         'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
+                        'current_partitions' => json_encode($kafka->getAssignment()),
                     ]);
                     $kafka->assign(NULL);
             }
