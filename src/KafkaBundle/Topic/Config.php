@@ -41,6 +41,8 @@ class Config
         $conf = new Conf();
 
         $conf->set('metadata.broker.list', $this->brokers);
+        $conf->set('auto.commit.enable', 'false');
+        $conf->set('enable.auto.offset.store', 'false');
         $conf->setDefaultTopicConf($this->getTopicConfig());
 
         if (null === $this->properties) {
@@ -69,7 +71,7 @@ class Config
             $conf->set($property, (string) $value);
         }
 
-        $conf->set('auto.commit.enable', '0');
+        $conf->set('auto.commit.enable', 'false');
 
         return $conf;
     }
