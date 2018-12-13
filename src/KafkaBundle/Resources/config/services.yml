@@ -6,3 +6,9 @@ services:
       - '@logger'
     tags:
       - { name: monolog.logger, channel: kafka }
+
+  kafka_consumer_command:
+    class: KafkaBundle\Command\ConsumerCommand
+    arguments:
+      - '@kafka_manager'
+    tags: [ console.command ]

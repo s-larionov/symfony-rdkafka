@@ -20,13 +20,11 @@ class ConsumerCommand extends ContainerAwareCommand
     /** @var KafkaManager */
     protected $kafkaManager;
 
-    /** @inheritdoc */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    public function __construct(KafkaManager $kafkaManager)
     {
-        parent::initialize($input, $output);
-        $this->kafkaManager = $this->getContainer()->get('kafka_manager');
+        parent::__construct();
+        $this->kafkaManager = $kafkaManager;
     }
-
 
     /** @inheritdoc */
     protected function configure()
