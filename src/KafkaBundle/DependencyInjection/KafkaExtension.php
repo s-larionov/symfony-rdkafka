@@ -31,7 +31,7 @@ class KafkaExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $manager = $container->getDefinition('kafka_manager');
-        $manager->replaceArgument(2, $config['manual_rebalancing'] ?? false);
+        $manager->replaceArgument(1, $config['manual_rebalancing'] ?? false);
 
         $this->registerConsumers($manager, $config);
         $this->registerProducers($manager, $config);
