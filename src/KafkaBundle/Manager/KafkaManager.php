@@ -36,7 +36,7 @@ class KafkaManager
     {
         $config = new Config($brokers, $properties, $topic, $topicProperties);
 
-        $this->consumers[$name] = new Consumer($config, $this->logger);
+        $this->consumers[$name] = new Consumer($config, $this->logger, $this->manualRebalancing);
 
         return $this;
     }
