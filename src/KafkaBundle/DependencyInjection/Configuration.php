@@ -26,6 +26,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->booleanNode('manual_rebalancing')->defaultTrue()->end()
                 ->arrayNode('producers')
                     ->canBeUnset()
                     ->prototype('array')

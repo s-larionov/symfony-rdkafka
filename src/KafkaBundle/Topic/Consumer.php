@@ -19,10 +19,14 @@ class Consumer
     /** @var LoggerInterface */
     protected $logger;
 
-    public function __construct(Config $config, LoggerInterface $logger)
+    /** @var bool */
+    protected $manualRebalancing;
+
+    public function __construct(Config $config, LoggerInterface $logger, bool $manualRebalancing = false)
     {
         $this->config = $config;
         $this->logger = $logger;
+        $this->manualRebalancing = $manualRebalancing;
     }
 
     /**
@@ -123,32 +127,35 @@ class Consumer
         }
 
         $config = $this->config->getKafkaConfig();
-        $config->setRebalanceCb(function (KafkaConsumer $kafka, int $error, array $partitions = null): void {
-            /** @var TopicPartition $partitions */
-            switch ($error) {
-                case RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS:
-                    $this->logger->info('Assign partitions', [
-                        'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
-                        'current_partitions' => json_encode($kafka->getAssignment()),
-                    ]);
-                    $kafka->assign($partitions);
-                    break;
-                case RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS:
-                    $this->logger->info('Revoke partitions', [
-                        'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
-                        'current_partitions' => json_encode($kafka->getAssignment()),
-                    ]);
-                    $kafka->assign(NULL);
-                    break;
-                default:
-                    $this->logger->error('Rebalance error', [
-                        'error_code' => $error,
-                        'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
-                        'current_partitions' => json_encode($kafka->getAssignment()),
-                    ]);
-                    $kafka->assign(NULL);
-            }
-        });
+
+        if ($this->manualRebalancing) {
+            $config->setRebalanceCb(function (KafkaConsumer $kafka, int $error, array $partitions = null): void {
+                /** @var TopicPartition $partitions */
+                switch ($error) {
+                    case RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS:
+                        $this->logger->info('Assign partitions', [
+                            'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
+                            'current_partitions' => json_encode($kafka->getAssignment()),
+                        ]);
+                        $kafka->assign($partitions);
+                        break;
+                    case RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS:
+                        $this->logger->info('Revoke partitions', [
+                            'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
+                            'current_partitions' => json_encode($kafka->getAssignment()),
+                        ]);
+                        $kafka->assign(NULL);
+                        break;
+                    default:
+                        $this->logger->error('Rebalance error', [
+                            'error_code' => $error,
+                            'partitions' => json_encode($this->extractPartitionsInfo($partitions)),
+                            'current_partitions' => json_encode($kafka->getAssignment()),
+                        ]);
+                        $kafka->assign(NULL);
+                }
+            });
+        }
         $config->setErrorCb(function(KafkaConsumer $consumer, int $error, string $reason) {
             $this->logger->error('KafkaConsumer error', [
                 'error_code' => $error,

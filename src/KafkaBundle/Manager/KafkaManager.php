@@ -19,13 +19,17 @@ class KafkaManager
     /** @var LoggerInterface */
     protected $logger;
 
-    public function __construct(LoggerInterface $logger = null)
+    /** @var bool */
+    protected $manualRebalancing;
+
+    public function __construct(LoggerInterface $logger = null, bool $manualRebalancing = false)
     {
         if (null === $logger) {
             $logger = new NullLogger();
         }
 
         $this->logger = $logger;
+        $this->manualRebalancing = $manualRebalancing;
     }
 
     public function registerConsumer(string $name, string $brokers, ?array $properties, string $topic, ?array $topicProperties): self

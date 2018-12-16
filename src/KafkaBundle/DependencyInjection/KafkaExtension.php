@@ -5,6 +5,7 @@ namespace KafkaBundle\DependencyInjection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
@@ -29,14 +30,15 @@ class KafkaExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $this->registerConsumers($container, $config);
-        $this->registerProducers($container, $config);
+        $manager = $container->getDefinition('kafka_manager');
+        $manager->replaceArgument(2, $config['manual_rebalancing'] ?? false);
+
+        $this->registerConsumers($manager, $config);
+        $this->registerProducers($manager, $config);
     }
 
-    protected function registerConsumers(ContainerBuilder $container, array $config): void
+    protected function registerConsumers(Definition $manager, array $config): void
     {
-        $manager = $container->getDefinition('kafka_manager');
-
         if (!array_key_exists('consumers', $config) || !is_array($config['consumers'])) {
             return;
         }
@@ -50,10 +52,8 @@ class KafkaExtension extends Extension
         }
     }
 
-    protected function registerProducers(ContainerBuilder $container, array $config): void
+    protected function registerProducers(Definition $manager, array $config): void
     {
-        $manager = $container->getDefinition('kafka_manager');
-
         if (!array_key_exists('producers', $config) || !is_array($config['producers'])) {
             return;
         }

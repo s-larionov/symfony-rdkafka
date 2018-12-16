@@ -4,6 +4,7 @@ services:
     lazy: true
     arguments:
       - '@logger'
+      - false
     tags:
       - { name: monolog.logger, channel: kafka }
 
