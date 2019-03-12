@@ -3,9 +3,10 @@
     "authors": [
         {
             "name": "Sergey Larionov",
-            "email": "s.larionov@airpush.com"
+            "email": "sergey@larionov.biz"
         }
     ],
+    "license": "MIT",
     "require": {
         "php" : "^7.1",
         "ext-rdkafka" : "*",
