@@ -51,6 +51,7 @@ kafka:
       topic: kafka_topic_name
       properties:
         # the same as kafka.producers.[producer_name].properties
+        max_poll_interval_ms: 300000
       topic_properties:
         # All properties are optional
         offset_store_method: broker
