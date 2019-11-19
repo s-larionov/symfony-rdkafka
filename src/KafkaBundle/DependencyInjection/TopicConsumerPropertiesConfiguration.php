@@ -15,24 +15,6 @@ use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 trait TopicConsumerPropertiesConfiguration
 {
     /**
-     * Maximum allowed time between calls to consume messages (e.g., rd_kafka_consumer_poll()) for high-level
-     * consumers. If this interval is exceeded the consumer is considered failed and the group will rebalance
-     * in order to reassign the partitions to another consumer group member. Warning: Offset commits may be not
-     * possible at this point. Note: It is recommended to set enable.auto.offset.store=false for long-time
-     * processing applications and then explicitly store offsets (using offsets_store()) after message processing,
-     * to make sure offsets are not auto-committed prior to processing has finished. The interval is checked
-     * two times per second. See KIP-62 for more information.
-     * Default value: 300000
-     */
-    protected function maxPollIntervalMsNodeDef(): NodeDefinition
-    {
-        $node = new IntegerNodeDefinition('max_poll_interval_ms');
-        $node->min(1)->max(86400000)->defaultValue(300000);
-
-        return $node;
-    }
-
-    /**
      * Action to take when there is no initial offset in offset store or the desired offset is out of
      * range: 'smallest','earliest' - automatically reset the offset to the smallest offset, 'largest',
      * 'latest' - automatically reset the offset to the largest offset,
@@ -110,7 +92,6 @@ trait TopicConsumerPropertiesConfiguration
             ->append($this->offsetStoreSyncIntervalMsNodeDef())
             ->append($this->offsetStoreMethodNodeDef())
             ->append($this->consumeCallbackMaxMessagesNodeDef())
-            ->append($this->maxPollIntervalMsNodeDef())
             ->end();
     }
 }
